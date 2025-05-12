@@ -5,7 +5,8 @@
 #include <limits>
 #include <vector>
 
-using namespace std;
+using std::cout; using std::fstream; using std::string; using std::cin; using std::ios;
+using std::endl; using std::vector;
 
 //declare functions
 void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int &attackMode);
@@ -48,7 +49,7 @@ int main() {
     //call function to remove last line in payload.txt
     CleanPayload(file);
 }
-
+// main loop which checks if any key is pressed 
 void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int &attackMode) {
     //open file
     fstream fout;
@@ -159,8 +160,8 @@ void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int 
     }
     return;
 }
-//creates a STRINGLN command in ducky language
-//begins/ends when ALT + 1 is pressed
+// creates a STRINGLN command in ducky language
+// begins/ends when ALT + 1 is pressed
 void FormatString(string file, unsigned char key, bool shift, bool ctrl){
     //declare variables
     string stringdelay = "DELAY 600";
@@ -233,6 +234,7 @@ void FormatString(string file, unsigned char key, bool shift, bool ctrl){
     return;
 }
 
+// change between HID, STRING, and comments
 void ChangeMode(string file, unsigned char key, bool &bisString, int &isString, int &isComment){
     fstream fout;
     fout.open(file.c_str(), ios::app); //ios::app used to append to file
@@ -284,7 +286,7 @@ void ChangeMode(string file, unsigned char key, bool &bisString, int &isString, 
     fout.close();
     return;
 }
-
+// checks all special characters (comma, semicolon, slashes)
 void SpecialKeys(string file, unsigned char key, int &counter){
     fstream fout;
     //open file
@@ -395,7 +397,7 @@ void SpecialKeys(string file, unsigned char key, int &counter){
     fout.close();
     return;
 }
-
+// change attack mode - HID or HID STORAGE
 bool ChangeAttackMode(string file, unsigned char &key, int &attackMode){
 
     fstream fout;
@@ -434,8 +436,7 @@ bool ChangeAttackMode(string file, unsigned char &key, int &attackMode){
     fout.close();
     return true;
 }
-
-//paste copied text
+// paste copied text
 bool PasteText(string file, unsigned char key, bool ctrl){
     Sleep(100);
     if(key == 0x56 || key == 0x43 && ctrl){
@@ -481,7 +482,7 @@ bool PasteText(string file, unsigned char key, bool ctrl){
     return false;
     }
 }
-
+// cleans any errors made in transcription of keys (last escape character)
 void CleanPayload(string file){
     fstream fin;
     fstream fout;
