@@ -21,7 +21,9 @@ int main() {
     fstream fout;
     //declare variables
     bool bisString = false;
-    int isString, isComment, attackMode = 0;
+    int isString = 0;
+    int isComment = 0;
+    int attackMode = 0;
 
     string fileNumber;
     cout << "File will be saved to payload[number].txt" << endl;
@@ -44,7 +46,6 @@ int main() {
     cout << "Cleaning up file" << endl;
     //call function to remove last line in payload.txt
     CleanPayload(file);
-
 }
 
 void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int &attackMode) {
@@ -74,7 +75,7 @@ void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int 
             {
                 keyState[key] = true;
                 
-
+                //cout << endl << isString << endl;
                 bool ctrl = GetAsyncKeyState(VK_CONTROL) & 0x8000;
                 bool shift = GetAsyncKeyState(VK_SHIFT) & 0x8000;
                 bool alt = GetAsyncKeyState(VK_MENU) & 0x8000;
@@ -174,7 +175,7 @@ void FormatString(string file, unsigned char key, bool shift){
     switch(key) 
     {
         //windows control keys
-        case VK_BACK: fout << "<->"; cout << "<->"; break;
+        case VK_BACK: fout << "\b"; cout << "\b"; break;
         case VK_TAB: fout << "\t"; cout << "\t"; break;
         case VK_RETURN: fout << "\n" << stringdelay << endl << "STRINGLN ";
                         cout << "\n" << stringdelay << endl << "STRINGLN "; break;
@@ -235,7 +236,7 @@ void ChangeMode(string file, unsigned char key, bool &bisString, int &isString, 
         return;
     }
 
-    if(key == 0x70)
+    if(key == 0x70) //if F1 is pressed a string command starts/ends
     {
         if(isString % 2 == 0){
             //starts a string command in ducky language
@@ -260,7 +261,7 @@ void ChangeMode(string file, unsigned char key, bool &bisString, int &isString, 
         }
         isString++;
     }
-    if(key == 0x72){
+    if(key == 0x72){ //if F3 is pressed a comment starts/ends
         if(isComment % 2 == 0){
             //starts a comment in ducky language
             bisString = true;
@@ -460,6 +461,9 @@ void CleanPayload(string file){
     for(int j = 0; j < contents.size() - 1; j++){
         fout << contents[j] << endl;
         cout << contents[j] << endl;
+        Sleep(50);
     }
     fout.close();
+    Sleep(3000);
+    return;
 }
