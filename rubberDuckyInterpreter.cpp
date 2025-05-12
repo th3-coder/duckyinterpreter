@@ -9,10 +9,11 @@ using namespace std;
 
 //declare functions
 void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int &attackMode);
-void FormatString(string file, unsigned char key, bool shift);
+void FormatString(string file, unsigned char key, bool shift, bool ctrl);
 void ChangeMode(string file, unsigned char key, bool &bisString, int &isString, int &isComment);
 void SpecialKeys(string file, unsigned char key, int &counter);
 bool ChangeAttackMode(string file, unsigned char &key, int &attackMode);
+bool PasteText(string file, unsigned char key, bool ctrl);
 void CleanPayload(string file);
 
 //global variables
@@ -132,7 +133,7 @@ void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int 
                 }
                 else //call format string function
                 {
-                    FormatString(file, key, shift);
+                    FormatString(file, key, shift, ctrl);
                 }
                 //exit program if SHIFT+ESC is pressed
                 if(key == 0x1B && GetAsyncKeyState(VK_SHIFT) & 0x8000){
@@ -160,7 +161,7 @@ void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int 
 }
 //creates a STRINGLN command in ducky language
 //begins/ends when ALT + 1 is pressed
-void FormatString(string file, unsigned char key, bool shift){
+void FormatString(string file, unsigned char key, bool shift, bool ctrl){
     //declare variables
     string stringdelay = "DELAY 600";
 
@@ -172,6 +173,10 @@ void FormatString(string file, unsigned char key, bool shift){
         return;
     }
 
+    if(PasteText(file, key, ctrl))
+    {
+        return;
+    }
     switch(key) 
     {
         //windows control keys
@@ -428,6 +433,53 @@ bool ChangeAttackMode(string file, unsigned char &key, int &attackMode){
     }
     fout.close();
     return true;
+}
+
+//paste copied text
+bool PasteText(string file, unsigned char key, bool ctrl){
+    Sleep(100);
+    if(key == 0x56 || key == 0x43 && ctrl){
+        fstream fout;
+        fout.open(file.c_str(), ios::app);
+        if(!fout){
+            cout << "Error opening file";
+            return false;
+        }
+        if (!OpenClipboard(NULL)) {
+            cout << "Error opening clipboard." << endl;
+            fout.close();
+            return false;
+        }
+
+        HANDLE hClipboardData = GetClipboardData(CF_TEXT);
+        if (hClipboardData == NULL) {
+            cout << "Error getting clipboard data." << endl;
+            CloseClipboard();
+            fout.close();
+            return false;
+        }
+
+        char* pszText = static_cast<char*>(GlobalLock(hClipboardData));
+        if (pszText == NULL) {
+            cout << "Error locking global memory." << endl;
+            CloseClipboard();
+            fout.close();
+            return false;
+        }
+
+        string text(pszText);
+
+        GlobalUnlock(hClipboardData);
+        CloseClipboard();
+
+        fout << text;
+        cout << text;
+        fout.close();
+        return true;
+        }
+    else{
+    return false;
+    }
 }
 
 void CleanPayload(string file){
