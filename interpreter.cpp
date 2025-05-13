@@ -45,7 +45,7 @@ int main() {
     Sleep(150);
 
     cout << endl << "- - - KEY FUNCTIONS - - -" << endl << endl;
-    cout << "Begin String: Any character A-Z" << endl << "End String: Return" << endl << endl 
+    cout << "Begin String: Any character A-Z" << endl << "End String: *** Return *** CTRL+RETURN *** SHIFT+RETURN **** CTRL+SHIFT+RETURN ***" << endl << endl 
          << "F4: Start/Stop Comment" << endl << endl
          << "F8: Manual Delay (1500ms)" << endl << endl 
          << "F9: Change Attack Mode (HID/STORAGE)"  << endl << endl;
@@ -53,6 +53,7 @@ int main() {
     //call main function
     cout << "Keylogger started, will be saved to " << file << endl;
     cout << ". . . X_X Press ALT+ESCAPE to exit X_X . . ." << endl << endl;
+    cout << "- - - Start of File - - -" << endl;
     CheckKeys(file, bisString, isString, isComment, attackMode);
 
     cout << endl << endl << "^o^ Cleaning up file ^o^" << endl;
@@ -84,7 +85,7 @@ void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int 
 
     while(true)
     {
-        Sleep(150); //sleep for 100ms to prevent high CPU usage
+        Sleep(50); //sleep for 100ms to prevent high CPU usage
         for(key = 8; key <= 255; key++)
         {
             isPressed = (GetAsyncKeyState(key) & 0x8000);
@@ -304,6 +305,7 @@ void ChangeMode(string file, unsigned char key, bool &bisString, int &isString, 
 
     string stringdelay = "DELAY 1200";
 
+    // start string using shortcut key
     // if(key == 0x71) //if F2 is pressed a string command starts/ends
     // {
     //     if(isString % 2 == 0){
@@ -329,7 +331,9 @@ void ChangeMode(string file, unsigned char key, bool &bisString, int &isString, 
     //     }
     //     isString++;
     // }
-    if((key >= 0x41 && key <= 0x5A && !bisString && !ctrl && !shift && !alt && !(GetAsyncKeyState(VK_LWIN) & 0x8000))) //if F2 is pressed a string command starts/ends
+   
+   //auto string begin/end
+    if((key >= 0x41 && key <= 0x5A && !bisString && !ctrl && !shift && !alt && !(GetAsyncKeyState(VK_LWIN) & 0x8000)))
     {
         //starts a string command in ducky language
         if(isString == 0)
@@ -345,6 +349,55 @@ void ChangeMode(string file, unsigned char key, bool &bisString, int &isString, 
             fout << stringdelay << endl << "STRING ";
         }
         isString++;
+    }
+    else if((ctrl || shift || alt) && bisString){
+        bool enter = (GetAsyncKeyState(VK_RETURN) & 0x8000);
+        int i = 0;
+        if(ctrl){
+            if(enter){
+                cout << endl << stringdelay << endl;
+                fout << endl << stringdelay << endl;
+                cout << "CTRL ";
+                fout << "CTRL ";
+                bisString = false;
+                i++;
+            }
+            }
+
+        if(shift){
+            if(enter){
+                if(i == 0)
+                {
+                    cout << endl << stringdelay << endl;
+                    fout << endl << stringdelay << endl;
+                }
+                cout << "SHIFT ";
+                fout << "SHIFT ";
+                i++;
+                bisString = false;
+            }
+        }
+        if(alt){
+            if(enter){
+                if(i == 0)
+                {
+                    cout << endl << stringdelay << endl;
+                    fout << endl << stringdelay << endl;
+                }
+                cout << "ALT ";
+                fout << "ALT ";
+                i++;
+                bisString = false;
+            }
+        }
+        if(key == VK_RETURN){
+            if(i == 0){
+                cout << endl << stringdelay << endl;
+                fout << endl << stringdelay << endl;
+            }
+            bisString = false;
+            isString = 1;
+        }
     }
     else if(key == VK_RETURN && bisString){
         bisString = false;
