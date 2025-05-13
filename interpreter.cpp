@@ -32,17 +32,16 @@ int main() {
     int attackMode = 0;
 
     string fileNumber;
-    //cout << "Warning : Working on adding backspaces and delete action so be careful when making inputs" << endl << endl;
-    cout << "File will be saved to payload[number].txt" << endl;
+    cout << "Warning !!!: Working on adding backspaces be careful when deleting empty space (non characters)" << endl << endl;
     cout << "Enter file number: ";
     cin >> fileNumber;
     string file = "payload" + fileNumber + ".dd";
     //delete old file
     string deleteOld = "del " + file;
     
-    system(deleteOld.c_str());
     cout << "Deleting old file . . ." << endl;
-    Sleep(150);
+    system(deleteOld.c_str());
+    Sleep(90);
 
     cout << endl << "- - - KEY FUNCTIONS - - -" << endl << endl;
     cout << "Begin String: Any character A-Z" << endl << "End String: *** Return *** CTRL+RETURN *** SHIFT+RETURN **** CTRL+SHIFT+RETURN ***" << endl << endl 
@@ -70,6 +69,7 @@ void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int 
     fout.open(file.c_str(), ios::app);
     if(!fout) {
         cout << "Error opening file" << endl;
+        return;
     }
 
     //declare variables
@@ -100,9 +100,28 @@ void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int 
                 bool alt = GetAsyncKeyState(VK_MENU) & 0x8000;
                 
                 //cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear input buffer
+
+                // close file
+                //fout.close();
                 ChangeMode(file, key, bisString, isString, isComment, ctrl, shift, alt);
+                // reopen file
+                // fout.open(file.c_str());
+                // if(!fout){
+                //     cout << "Error opening file" << endl;
+                //     return;
+                // }
+
                 //bAttackMode = ChangeAttackMode(file, key, attackMode);
+                // close file
+                //fout.close();
                 AddDelay(file, key);
+                // reopen file
+                //fout.open(file.c_str());
+                // if(!fout){
+                //     cout << "Error opening file" << endl;
+                //     return;
+                // }
+
                 if(!ChangeAttackMode(file, key, attackMode))
                 {
                     break;
@@ -152,7 +171,9 @@ void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int 
                 }
                 else //call format string function
                 {
+                    //fout.close();
                     FormatString(file, key, shift, ctrl);
+                    //fout.open(file.c_str());
                 }
                 //exit program if ALT+ESC is pressed
                 if(key == 0x1B && GetAsyncKeyState(VK_MENU) & 0x8000){
@@ -677,6 +698,7 @@ void CleanPayload(string file){
     Sleep(3000);
     return;
 }
+// adds backspace functionality to string commands
 void DeleteKey(string file){
     fstream fin;
     fstream fout;
@@ -699,8 +721,9 @@ void DeleteKey(string file){
     fin.close();
 
     if (!contents.empty()) {
-    contents.back().pop_back();
+            contents.back().pop_back();
     }
+
     //replace file with contents vector (old file minus last line)
     fout.open(file.c_str(), ios::out | ios::trunc);
     if(!fout){
@@ -709,23 +732,25 @@ void DeleteKey(string file){
     }
     for(int j = 0; j < contents.size(); j++){
         fout << contents[j];
-        if(contents[j] != "STRING ")
+        if(j != contents.size()-1)
              fout << endl;
     }
     fout.close();
     return;
 }
+
 void AddDelay(string file, unsigned char key){
     fstream fout;
     if(key == 0x77){
-        fout.open(file.c_str());
+        fout.open(file.c_str(), ios::app);
         if(!fout){
             cout << "Error opening file" << endl;
             return;
         }
-        fout << endl << "DELAY 1500" << endl;
+        fout << "DELAY 1500" << endl;
         cout << endl << "DELAY 1500" << endl;
         fout.close();
     }
+    //fout.close();
     return;
 }
