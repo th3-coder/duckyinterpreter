@@ -19,7 +19,7 @@ bool ChangeAttackMode(string file, unsigned char &key, int &attackMode);
 bool PasteText(string file, unsigned char key, bool ctrl);
 void CleanPayload(string file);
 void DeleteKey(string file);
-void AddDelay(string file, unsigned char key);
+bool AddDelay(string file, unsigned char key);
 
 //global variables
 
@@ -43,16 +43,18 @@ int main() {
     system(deleteOld.c_str());
     Sleep(90);
 
-    cout << endl << "- - - KEY FUNCTIONS - - -" << endl << endl;
+    cout << "--------------------------------- KEY FUNCTIONS ------------------------------------" << endl;
     cout << "Begin String: Any character A-Z" << endl << "End String: *** Return *** CTRL+RETURN *** SHIFT+RETURN **** CTRL+SHIFT+RETURN ***" << endl << endl 
-         << "F4: Start/Stop Comment" << endl << endl
-         << "F8: Manual Delay (1500ms)" << endl << endl 
-         << "F9: Change Attack Mode (HID/STORAGE)"  << endl << endl;
+         << "Start/Stop Comment: F4" << endl << endl
+         << "Manual Delay: NUMLOCK + ARROW" << endl
+         << "\t\tLEFT:  300ms" << endl << "\t\tUP:    600ms" << endl << "\t\tRIGHT: 1,500ms" << endl << "\t\tDOWN:  3,000ms" << endl << endl
+         << "Change Attack Mode (HID/STORAGE): F9"  << endl;
+    cout << "-------------------------------------------------------------------------------------" << endl << endl;
     Sleep(50);
     //call main function
     cout << "Keylogger started, will be saved to " << file << endl;
     cout << ". . . X_X Press ALT+ESCAPE to exit X_X . . ." << endl << endl;
-    cout << "- - - Start of File - - -" << endl;
+    cout << "\t- - - Start of File - - -" << endl;
     CheckKeys(file, bisString, isString, isComment, attackMode);
 
     cout << endl << endl << "^o^ Cleaning up file ^o^" << endl;
@@ -100,27 +102,15 @@ void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int 
                 bool alt = GetAsyncKeyState(VK_MENU) & 0x8000;
                 
                 //cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear input buffer
-
-                // close file
+                if(AddDelay(file, key))
+                {
+                    break;
+                }
+                
                 //fout.close();
                 ChangeMode(file, key, bisString, isString, isComment, ctrl, shift, alt);
-                // reopen file
-                // fout.open(file.c_str());
-                // if(!fout){
-                //     cout << "Error opening file" << endl;
-                //     return;
-                // }
-
+                
                 //bAttackMode = ChangeAttackMode(file, key, attackMode);
-                // close file
-                //fout.close();
-                AddDelay(file, key);
-                // reopen file
-                //fout.open(file.c_str());
-                // if(!fout){
-                //     cout << "Error opening file" << endl;
-                //     return;
-                // }
 
                 if(!ChangeAttackMode(file, key, attackMode))
                 {
@@ -739,18 +729,44 @@ void DeleteKey(string file){
     return;
 }
 
-void AddDelay(string file, unsigned char key){
+bool AddDelay(string file, unsigned char key){
     fstream fout;
-    if(key == 0x77){
+    if(GetAsyncKeyState(VK_NUMLOCK) & 0x8000){
+        //opem file if command key pressed
         fout.open(file.c_str(), ios::app);
         if(!fout){
             cout << "Error opening file" << endl;
-            return;
+            return false;
         }
-        fout << "DELAY 1500" << endl;
-        cout << endl << "DELAY 1500" << endl;
+
+        if(GetAsyncKeyState(VK_LEFT) & 0x8000)
+        {
+            fout << "DELAY 300" << endl;
+            cout << endl << "DELAY 300" << endl;
+        }
+
+        else if(GetAsyncKeyState(VK_UP) & 0x8000)
+        {
+            fout << "DELAY 600" << endl;
+            cout << endl << "DELAY 600" << endl;
+        }
+        else if(GetAsyncKeyState(VK_RIGHT) & 0x8000)
+        {
+            fout << "DELAY 1500" << endl;
+            cout << endl << "DELAY 1500" << endl;
+        }
+
+        else if(GetAsyncKeyState(VK_DOWN) & 0x8000)
+        {
+            fout << "DELAY 3000" << endl;
+            cout << endl << "DELAY 3000" << endl;
+        }
+        //close file
         fout.close();
+        return true;
     }
-    //fout.close();
-    return;
+
+    else{
+    return false;
+    }
 }
