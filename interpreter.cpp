@@ -12,7 +12,7 @@ using std::endl; using std::vector;
 //declare functions
 void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int &attackMode);
 void FormatString(string file, unsigned char key, bool shift, bool ctrl);
-void ChangeMode(string file, unsigned char key, bool &bisString, int &isString, int &isComment);
+void ChangeMode(string file, unsigned char key, bool &bisString, int &isString, int &isComment, bool ctrl, bool shift, bool alt);
 void InitialDelay(string file);
 void SpecialKeys(string file, unsigned char key, int &counter);
 bool ChangeAttackMode(string file, unsigned char &key, int &attackMode);
@@ -32,7 +32,7 @@ int main() {
     int attackMode = 0;
 
     string fileNumber;
-    cout << "Warning : Working on adding backspaces and delete action so be careful when making inputs" << endl << endl;
+    //cout << "Warning : Working on adding backspaces and delete action so be careful when making inputs" << endl << endl;
     cout << "File will be saved to payload[number].txt" << endl;
     cout << "Enter file number: ";
     cin >> fileNumber;
@@ -45,7 +45,7 @@ int main() {
     Sleep(150);
 
     cout << endl << "- - - KEY FUNCTIONS - - -" << endl << endl;
-    cout << "F2: Start/Stop String" << endl << endl 
+    cout << "Begin String: Any character A-Z" << endl << "End String: Return" << endl << endl 
          << "F4: Start/Stop Comment" << endl << endl
          << "F8: Manual Delay (1500ms)" << endl << endl 
          << "F9: Change Attack Mode (HID/STORAGE)"  << endl << endl;
@@ -99,7 +99,7 @@ void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int 
                 bool alt = GetAsyncKeyState(VK_MENU) & 0x8000;
                 
                 //cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear input buffer
-                ChangeMode(file, key, bisString, isString, isComment);
+                ChangeMode(file, key, bisString, isString, isComment, ctrl, shift, alt);
                 //bAttackMode = ChangeAttackMode(file, key, attackMode);
                 AddDelay(file, key);
                 if(!ChangeAttackMode(file, key, attackMode))
@@ -294,7 +294,7 @@ void FormatString(string file, unsigned char key, bool shift, bool ctrl){
     return;
 }
 // change between HID, STRING, and comments
-void ChangeMode(string file, unsigned char key, bool &bisString, int &isString, int &isComment){
+void ChangeMode(string file, unsigned char key, bool &bisString, int &isString, int &isComment, bool ctrl, bool shift, bool alt){
     fstream fout;
     fout.open(file.c_str(), ios::app); //ios::app used to append to file
     if(!fout) {
@@ -304,31 +304,55 @@ void ChangeMode(string file, unsigned char key, bool &bisString, int &isString, 
 
     string stringdelay = "DELAY 1200";
 
-    if(key == 0x71) //if F2 is pressed a string command starts/ends
+    // if(key == 0x71) //if F2 is pressed a string command starts/ends
+    // {
+    //     if(isString % 2 == 0){
+    //         //starts a string command in ducky language
+    //         if(isString == 0)
+    //         {
+    //             fout << endl << "$_JITTER_ENABLED = TRUE\n\n";
+    //             cout << endl << "$_JITTER_ENABLED = TRUE\n\n";
+    //             //this is a DUCKY function which sets small delay between typing each char
+    //             // in stringln statement
+    //         }
+    //         bisString = true;
+    //         cout << stringdelay << endl << "STRING ";
+    //         fout << stringdelay << endl << "STRING ";
+    //     }
+    //     else {
+    //         //ends a string command in ducky language
+    //         bisString = false;
+    //         cout << endl;
+    //         cout << "DELAY 600" << endl;
+    //         fout << endl;
+    //         fout << "DELAY 600" << endl;
+    //     }
+    //     isString++;
+    // }
+    if((key >= 0x41 && key <= 0x5A && !bisString && !ctrl && !shift && !alt && !(GetAsyncKeyState(VK_LWIN) & 0x8000))) //if F2 is pressed a string command starts/ends
     {
-        if(isString % 2 == 0){
-            //starts a string command in ducky language
-            if(isString == 0)
-            {
-                fout << endl << "$_JITTER_ENABLED = TRUE\n\n";
-                cout << endl << "$_JITTER_ENABLED = TRUE\n\n";
-                //this is a DUCKY function which sets small delay between typing each char
-                // in stringln statement
-            }
+        //starts a string command in ducky language
+        if(isString == 0)
+        {
+            fout << endl << "$_JITTER_ENABLED = TRUE\n\n";
+            cout << endl << "$_JITTER_ENABLED = TRUE\n\n";
+            //this is a DUCKY function which sets small delay between typing each char
+            // in stringln statement
+        }
+        if(isString == 1 || isString == 0){
             bisString = true;
             cout << stringdelay << endl << "STRING ";
             fout << stringdelay << endl << "STRING ";
         }
-        else {
-            //ends a string command in ducky language
-            bisString = false;
-            cout << endl;
-            cout << "DELAY 600" << endl;
-            fout << endl;
-            fout << "DELAY 600" << endl;
-        }
         isString++;
     }
+    else if(key == VK_RETURN && bisString){
+        bisString = false;
+        cout << endl << stringdelay << endl;
+        fout << endl << stringdelay << endl;
+        isString = 1;
+    }
+
     if(key == 0x73){ //if F4 is pressed a comment starts/ends
         if(isComment % 2 == 0){
             //starts a comment in ducky language
