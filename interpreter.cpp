@@ -18,6 +18,7 @@ void SpecialKeys(string file, unsigned char key, int &counter);
 bool ChangeAttackMode(string file, unsigned char &key, int &attackMode);
 bool PasteText(string file, unsigned char key, bool ctrl);
 void CleanPayload(string file);
+void AddDelay(string file, unsigned char key);
 
 //global variables
 
@@ -44,7 +45,8 @@ int main() {
 
     cout << endl << "- - - KEY FUNCTIONS - - -" << endl << endl;
     cout << "F2: Start/Stop String" << endl << endl 
-         << "F4: Start/Stop Comment" << endl << endl 
+         << "F4: Start/Stop Comment" << endl << endl
+         << "F8: Manual Delay (1500ms)" << endl << endl 
          << "F9: Change Attack Mode (HID/STORAGE)"  << endl << endl;
     Sleep(50);
     //call main function
@@ -98,6 +100,7 @@ void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int 
                 //cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear input buffer
                 ChangeMode(file, key, bisString, isString, isComment);
                 //bAttackMode = ChangeAttackMode(file, key, attackMode);
+                AddDelay(file, key);
                 if(!ChangeAttackMode(file, key, attackMode))
                 {
                     break;
@@ -589,5 +592,20 @@ void CleanPayload(string file){
     }
     fout.close();
     Sleep(3000);
+    return;
+}
+
+void AddDelay(string file, unsigned char key){
+    fstream fout;
+    if(key == 0x77){
+        fout.open(file.c_str());
+        if(!fout){
+            cout << "Error opening file" << endl;
+            return;
+        }
+        fout << endl << "DELAY 1500" << endl;
+        cout << endl << "DELAY 1500" << endl;
+        fout.close();
+    }
     return;
 }
