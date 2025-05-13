@@ -30,6 +30,7 @@ int main() {
     int attackMode = 0;
 
     string fileNumber;
+    cout << "Warning ⚠️: Working on adding backspaces and delete action so be careful when making inputs" << endl << endl;
     cout << "File will be saved to payload[number].txt" << endl;
     cout << "Enter file number: ";
     cin >> fileNumber;
@@ -42,14 +43,15 @@ int main() {
     Sleep(50);
     //call main function
     cout << "Keylogger started, will be saved to " << file << endl;
-    cout << "Press SHIFT+ESCAPE to exit . . ." << endl << endl;
+    cout << ". . . X_X Press SHIFT+ESCAPE to exit X_X . . ." << endl << endl;
     CheckKeys(file, bisString, isString, isComment, attackMode);
-    //keylogger finished
-    cout << "\nLogger finished, keystrokes saved in " << file << " in Rubber DUCKY format" << endl;
 
-    cout << "Cleaning up file" << endl;
+    cout << endl << endl << "^o^ Cleaning up file ^o^" << endl;
     //call function to remove last line in payload.txt
     CleanPayload(file);
+
+    //program finished
+    cout << endl << "\nLogger finished, keystrokes saved in " << file << " in Rubber DUCKY format ^_~" << endl;
 }
 // main loop which checks if any key is pressed 
 void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int &attackMode) {
