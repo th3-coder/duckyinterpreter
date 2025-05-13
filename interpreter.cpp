@@ -74,7 +74,7 @@ void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int 
     bool bAttackMode = true;
     unsigned char key;
     int counter = 0;
-    string keydelay = "DELAY 50";
+    string keydelay = "DELAY 300";
 
     //initial delay of 3 seconds
     InitialDelay(file);
