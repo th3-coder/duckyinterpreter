@@ -18,6 +18,7 @@ void SpecialKeys(string file, unsigned char key, int &counter);
 bool ChangeAttackMode(string file, unsigned char &key, int &attackMode);
 bool PasteText(string file, unsigned char key, bool ctrl);
 void CleanPayload(string file);
+void DeleteKey(string file);
 void AddDelay(string file, unsigned char key);
 
 //global variables
@@ -31,7 +32,7 @@ int main() {
     int attackMode = 0;
 
     string fileNumber;
-    cout << "Warning ⚠️: Working on adding backspaces and delete action so be careful when making inputs" << endl << endl;
+    cout << "Warning : Working on adding backspaces and delete action so be careful when making inputs" << endl << endl;
     cout << "File will be saved to payload[number].txt" << endl;
     cout << "Enter file number: ";
     cin >> fileNumber;
@@ -161,7 +162,7 @@ void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int 
             
             if(!isPressed && keyState[key]){
                 keyState[key] = false;
-                if(key > 159 && key < 224 || key == VK_LWIN || key == VK_RETURN || key == VK_SPACE || key == VK_TAB || key == VK_BACK || key == VK_ESCAPE || key == VK_UP || key == VK_DOWN || key == VK_LEFT || key == VK_RIGHT){
+                if(key > 159 && key < 224 || key == VK_LWIN || key == VK_RETURN || key == VK_SPACE || key == VK_TAB || key == VK_ESCAPE || key == VK_UP || key == VK_DOWN || key == VK_LEFT || key == VK_RIGHT){
                     // cout << " - - - released";
                     if(counter == 0 && !bisString){
                     cout << endl;
@@ -198,10 +199,10 @@ void FormatString(string file, unsigned char key, bool shift, bool ctrl){
         switch(key) 
         {
             //windows control keys
-            case VK_BACK: fout << "\b"; cout << "\b"; break;
+            case VK_BACK: fout.close(); DeleteKey(file); fout.open(file.c_str()); cout << "\b"; break;
             case VK_TAB: fout << "\t"; cout << "\t"; break;
             case VK_RETURN: fout << endl << stringdelay << endl << "ENTER" << endl
-                                << stringdelay << endl << "STRING ";
+                                 << stringdelay << endl << "STRING ";
                             cout << endl << stringdelay << endl << "ENTER" << endl
                                  << stringdelay << endl << "STRING "; break;
             //special characters
@@ -239,7 +240,7 @@ void FormatString(string file, unsigned char key, bool shift, bool ctrl){
         switch(key) 
         {
             //windows control keys
-            case VK_BACK: fout << "\b"; cout << "\b"; break;
+            case VK_BACK: fout.close(); DeleteKey(file); fout.open(file.c_str()); cout << "\b"; break;
             case VK_TAB: fout << "\t"; cout << "\t"; break;
             case VK_RETURN: fout << "\n" << stringdelay << endl << "STRING ";
                             cout << "\n" << stringdelay << endl << "STRING "; break;
@@ -552,6 +553,11 @@ bool PasteText(string file, unsigned char key, bool ctrl){
         fout.close();
         return true;
         }
+    else if(key == 0x43 && ctrl)
+        return true;
+    else if(key == 0x41 && ctrl)
+        return true;
+        
     else{
     return false;
     }
@@ -574,7 +580,7 @@ void CleanPayload(string file){
     //add current text file to vector for transfer
     while(getline(fin, content)){
         contents.push_back(content);
-        Sleep(50);
+        Sleep(5);
         i++;
     } 
     fin.close();
@@ -594,7 +600,44 @@ void CleanPayload(string file){
     Sleep(3000);
     return;
 }
+void DeleteKey(string file){
+    fstream fin;
+    fstream fout;
+    //declare variables
+    vector<string> contents;
+    string content;
+    int i = 0;
 
+    fin.open(file.c_str());
+    if(!fin){
+        cout << endl << endl << "Error opening file" << endl;
+        return;
+    }
+    //add current text file to vector for transfer
+    while(getline(fin, content)){
+        contents.push_back(content);
+        Sleep(5);
+        i++;
+    } 
+    fin.close();
+
+    if (!contents.empty()) {
+    contents.back().pop_back();
+    }
+    //replace file with contents vector (old file minus last line)
+    fout.open(file.c_str(), ios::out | ios::trunc);
+    if(!fout){
+        cout << "Error opening file" << endl;
+        return;
+    }
+    for(int j = 0; j < contents.size(); j++){
+        fout << contents[j];
+        if(contents[j] != "STRING ")
+             fout << endl;
+    }
+    fout.close();
+    return;
+}
 void AddDelay(string file, unsigned char key){
     fstream fout;
     if(key == 0x77){
