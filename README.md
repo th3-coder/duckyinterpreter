@@ -12,4 +12,4 @@ IMPORTANT: Run program as admin to log keys in admin powershell and cmd terminal
 * MANUAL DELAY: NUMLOCK+ARROWS
 * REMOVE PREVIOUS LINE: NUMLOCK+BACKSPACE
 * CHANGE ATTACKMODE: Press F9 to change ducky from HID to STORAGE device
-      * A template string is genereated when entering storage mode to save contents to ducky 
+    * A template string is genereated when entering storage mode to save contents to ducky 
