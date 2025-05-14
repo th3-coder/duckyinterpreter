@@ -20,6 +20,7 @@ bool PasteText(string file, unsigned char key, bool ctrl);
 void CleanPayload(string file);
 void DeleteKey(string file);
 bool AddDelay(string file, unsigned char key);
+bool DeleteLine(string file);
 
 //global variables
 
@@ -39,28 +40,32 @@ int main() {
     //delete old file
     string deleteOld = "del " + file;
     
-    cout << "Deleting old file . . ." << endl;
+    cout << "Deleting old file . . ." << endl << endl;
     system(deleteOld.c_str());
-    Sleep(90);
 
     cout << "--------------------------------- KEY FUNCTIONS ------------------------------------" << endl;
-    cout << "Auto Begin String: Any character A-Z" << endl << "End String: *** Return *** CTRL+RETURN *** SHIFT+RETURN **** CTRL+SHIFT+RETURN ***" << endl << endl 
-         << "Manual String (use to paste contents): F2 [paste key]" 
-         << "\tStart String -> Paste Contents -> Stop String" << endl << endl 
+    cout << "Auto Begin String: Any character A-Z" << endl << "End String:" << endl  
+         << "\t--Return    --CTRL+RETURN    --SHIFT+RETURN    --CTRL+SHIFT+RETURN" << endl << endl 
+         << "Manual String (use to paste contents): F2" << endl
+         << "\tStart String (F2) -> Paste Contents (CTRL+V) -> Stop String (F2)" << endl 
+         << "\tOR" << endl << "\tStart autostring and back space until empty string then paste" << endl << endl
          << "Start/Stop Comment: F4" << endl << endl
          << "Manual Delay: NUMLOCK + ARROW" << endl
          << "\t\tLEFT:  300ms" << endl << "\t\tUP:    600ms" << endl << "\t\tRIGHT: 1,500ms" << endl << "\t\tDOWN:  3,000ms" << endl << endl
-         << "Change Attack Mode (HID/STORAGE): F9"  << endl;
+         << "Change Attack Mode (HID/STORAGE): F9"  << endl << endl
+         << "Delete Previous Line: NUMLOCK+BACKSPACE" << endl;
     cout << "-------------------------------------------------------------------------------------" << endl << endl;
-    Sleep(50);
     //call main function
-    cout << "Keylogger started, will be saved to " << file << endl;
-    cout << ". . . X_X Press ALT+ESCAPE to exit X_X . . ." << endl << endl;
+    cout << "Keylogger started, will be saved to " << file << endl << endl;
+    cout << ". . . X_X Press ALT+ESCAPE to exit X_X . . ." << endl
+         << "        *CANNOT EXIT IN STRING MODE*" << endl << endl;
     cout << "\t- - - Start of File - - -" << endl;
+    Sleep(100);
     CheckKeys(file, bisString, isString, isComment, attackMode);
 
-    cout << endl << endl << "^o^ Cleaning up file ^o^" << endl;
+    cout << endl << endl << "^o^ Cleaning up file ^o^" << endl << endl;
     //call function to remove last line in payload.txt
+    cout << "\t- - - Testing output - - -" << endl << endl << endl;
     CleanPayload(file);
 
     //program finished
@@ -619,7 +624,6 @@ bool ChangeAttackMode(string file, unsigned char &key, int &attackMode){
 }
 // paste copied text
 bool PasteText(string file, unsigned char key, bool ctrl){
-    Sleep(100);
     if(key == 0x56 && ctrl){
         fstream fout;
         fout.open(file.c_str(), ios::app);
@@ -682,11 +686,9 @@ void CleanPayload(string file){
         cout << endl << endl << "Error opening file" << endl;
         return;
     }
-    cout << endl << " - - - Testing output - - -" << endl << endl << endl;
     //add current text file to vector for transfer
     while(getline(fin, content)){
         contents.push_back(content);
-        Sleep(5);
         i++;
     } 
     fin.close();
@@ -700,10 +702,9 @@ void CleanPayload(string file){
     for(int j = 0; j < contents.size() - 1; j++){
         fout << contents[j] << endl;
         cout << contents[j] << endl;
-        Sleep(50);
+        Sleep(16.5);
     }
     fout.close();
-    Sleep(3000);
     return;
 }
 // adds backspace functionality to string commands
@@ -723,7 +724,6 @@ void DeleteKey(string file){
     //add current text file to vector for transfer
     while(getline(fin, content)){
         contents.push_back(content);
-        Sleep(5);
         i++;
     } 
     fin.close();
@@ -738,10 +738,14 @@ void DeleteKey(string file){
         cout << "Error opening file" << endl;
         return;
     }
+
     for(int j = 0; j < contents.size(); j++){
         fout << contents[j];
-        if(j != contents.size()-1)
-             fout << endl;
+        //cout << contents[j];
+        if(j != contents.size()-1){
+            fout << endl;
+            //cout << endl;
+        }
     }
     fout.close();
     return;
@@ -779,6 +783,12 @@ bool AddDelay(string file, unsigned char key){
             fout << "DELAY 3000" << endl;
             cout << endl << "DELAY 3000" << endl;
         }
+        else if(GetAsyncKeyState(VK_BACK) & 0x8000)
+        {
+
+            DeleteLine(file);
+
+        }
         //close file
         fout.close();
         return true;
@@ -787,4 +797,21 @@ bool AddDelay(string file, unsigned char key){
     else{
     return false;
     }
+}
+
+bool DeleteLine(string file){
+    fstream fout;
+    fout.open(file.c_str(), ios::app);
+    if(!fout){
+        cout << "Error opening file";
+        return false;
+    }
+    cout << endl << endl << "\tRemoving Delay . . ." << endl << endl;
+    CleanPayload(file);
+    cout << endl << endl << "\tDeleting line . . ." << endl << endl;
+    Sleep(1);
+    CleanPayload(file);
+    cout << "REM PREVIOUS LINE DELETED" << endl;
+    fout << "REM LINE DELETED" << endl;
+    return true;
 }
