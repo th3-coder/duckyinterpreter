@@ -120,6 +120,7 @@ void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int 
                 bool shift = GetAsyncKeyState(VK_SHIFT) & 0x8000;
                 bool alt = GetAsyncKeyState(VK_MENU) & 0x8000;
                 
+                fout.close();
                 //cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear input buffer
                 if(AddDelay(file, key))
                 {
@@ -136,6 +137,11 @@ void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int 
                     break;
                 }
 
+                fout.open(file.c_str(), ios::app);
+                if(!fout) {
+                    cout << "Error opening file" << endl;
+                    return;
+                }
 
                 if(!bisString)
                 {
@@ -165,7 +171,16 @@ void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int 
                         counter = 0;
                     }
                     //if statements to check all special keys
+                    //close file
+                    fout.close();
+                    
                     SpecialKeys(file, key, counter);
+                    
+                    fout.open(file.c_str(), ios::app);
+                    if(!fout) {
+                        cout << "Error opening file" << endl;
+                        return;
+                    }
 
                     if(key >= 0x30 && key <= 0x39)
                     {
@@ -180,9 +195,13 @@ void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int 
                 }
                 else //call format string function
                 {
-                    //fout.close();
+                    fout.close();
                     FormatString(file, key, shift, ctrl);
-                    //fout.open(file.c_str());
+                    fout.open(file.c_str());
+                    if(!fout){
+                        cout << "Error opening file";
+                        return;
+                    }
                 }
                 //exit program if ALT+ESC is pressed
                 if(key == 0x1B && GetAsyncKeyState(VK_MENU) & 0x8000){
@@ -215,14 +234,15 @@ void FormatString(string file, unsigned char key, bool shift, bool ctrl){
 
     //open file
     fstream fout;
-    fout.open(file.c_str(), ios::app); //ios::app used to append to file
-    if(!fout) {
-        cout << endl << "Error opening file" << endl;
-        return;
-    }
 
     if(PasteText(file, key, ctrl))
     {
+        return;
+    }
+    //open file
+    fout.open(file.c_str(), ios::app);
+    if(!fout){
+        cout << "Error opening file";
         return;
     }
     if(!shift)
@@ -699,8 +719,10 @@ void CleanPayload(string file){
         return;
     }
     //add current text file to vector for transfer
+
     while(getline(fin, content)){
         contents.push_back(content);
+        //contents[i-1] = content;
         i++;
     } 
     fin.close();
@@ -712,7 +734,9 @@ void CleanPayload(string file){
         return;
     }
     for(int j = 0; j < contents.size() - 1; j++){
+        //fout << "[ " << j << " ] ";
         fout << contents[j] << endl;
+        cout << "[ " << j << " ] ";
         cout << contents[j] << endl;
         Sleep(16.5);
     }
@@ -812,18 +836,18 @@ bool AddDelay(string file, unsigned char key){
 }
 
 bool DeleteLine(string file){
-    fstream fout;
-    fout.open(file.c_str(), ios::app);
-    if(!fout){
-        cout << "Error opening file";
-        return false;
-    }
     cout << endl << endl << "\tRemoving Delay . . ." << endl << endl;
     CleanPayload(file);
     cout << endl << endl << "\tDeleting line . . ." << endl << endl;
     Sleep(1);
     CleanPayload(file);
     cout << "REM PREVIOUS LINE DELETED" << endl;
+    fstream fout;
+    fout.open(file.c_str(), ios::app);
+    if(!fout){
+        cout << "Error opening file";
+        return false;
+    }
     fout << "REM LINE DELETED" << endl;
     return true;
 }
