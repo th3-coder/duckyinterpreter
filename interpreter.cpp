@@ -63,13 +63,25 @@ int main() {
     Sleep(100);
     CheckKeys(file, bisString, isString, isComment, attackMode);
 
-    cout << endl << endl << "^o^ Cleaning up file ^o^" << endl << endl;
+    cout << endl << endl;
+    cout << "\t    ^o^ Cleaning up file ^o^" << endl << endl;
     //call function to remove last line in payload.txt
-    cout << "\t- - - Testing output - - -" << endl << endl << endl;
+    cout << "\t- - - FORMATTED DUCKY CODE - - -" << endl << endl << endl;
     CleanPayload(file);
-
+    cout << endl << endl << "\t - - - END OF DUCKY CODE - - -";
     //program finished
-    cout << endl << "\nLogger finished, keystrokes saved in " << file << " in Rubber DUCKY format ^_~" << endl;
+    cout << endl << "\nLogger finished, saved in " << file << " in Rubber DUCKY format ^_~" << endl << endl;
+    cout << "Press any key to continue" << endl;
+    while(true)
+    {
+        for(int i = 8; i <= 255; i++)
+        {
+            if(GetAsyncKeyState(i) & 0x8000)
+            {
+                return 0;
+            }
+        }
+    }
 }
 // main loop which checks if any key is pressed 
 void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int &attackMode) {

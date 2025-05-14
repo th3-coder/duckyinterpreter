@@ -1,9 +1,0 @@
-commands to add to interpreter
-RESTART_PAYLOAD
-//when button is pressed
-BUTTON_DEF
-	code runs in here
-END_BUTTON
-
-//RELEASES all keys
-RELEASE
