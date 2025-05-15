@@ -1,9 +1,22 @@
-"# duckyinterpreter" 
+"# DUCKYinterpreter" 
 
-IMPORTANT: Run program as admin to log keys in admin powershell and cmd terminals - - - ONLY WORKS ON WINDOWS
+* No need to manually write DUCKY scripts anymore!
+* emulate and test payload at the same time
+
+
+1. Run .exe
+    * opens terminal which shows rubby DUCKY formatted file in real time
+2. Enter file number (files with same name will be overwritten)
+3. Manually enter all inputs and emulate your desired payload
+4. Payload will then be saved to payload(_).dd in the same directory as the .exe
+5. Rename to desired name and transfer to rubberDUCKY (or any badusb device that uses DUCKY language)
+6. Plug in DUCKY and payload that you just emulated will run!
+
+
+IMPORTANT: Run program as admin to log keys in admin powershell and prevent authority issues in certain applications - - - ONLY WORKS ON WINDOWS
 * AUTOSTRING: starts a string when any A-Z character is typed, and ends when ENTER is pressed
 * MANUAL STRING: Press F2 to start/stop a manual string
-* COPY/PASTE (ONLY IN STRING MODE): CTRL+C, CTRL+V
+* COPY/PASTE (ONLY IN STRING MODE): CTRL+C (or copy with mouse), CTRL+V
      * If not in string mode, then
     1. Enter manual string mode (press F2)
     2. COPY CONTENTS
@@ -11,5 +24,5 @@ IMPORTANT: Run program as admin to log keys in admin powershell and cmd terminal
     4. Exit manual string mode (press F2)    
 * MANUAL DELAY: NUMLOCK+ARROWS
 * REMOVE PREVIOUS LINE: NUMLOCK+BACKSPACE
-* CHANGE ATTACKMODE: Press F9 to change ducky from HID to STORAGE device
-    * A template string is genereated when entering storage mode to save contents to ducky 
+* CHANGE ATTACKMODE (EXPERIMENTAL): Press F9 to change DUCKY from HID to STORAGE device
+    * A template string is genereated when entering storage mode to save contents to DUCKY 
