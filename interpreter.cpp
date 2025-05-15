@@ -117,6 +117,9 @@ void CheckKeys(string file, bool &bisString, int &isString, int &isComment, int 
                 bool shift = GetAsyncKeyState(VK_SHIFT) & 0x8000;
                 bool alt = GetAsyncKeyState(VK_MENU) & 0x8000;
                 
+                //find key ASCII value
+                //cout << int(key);
+                
                 fout.close();
                 //cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear input buffer
                 if(AddDelay(file, key))
@@ -280,7 +283,9 @@ void FormatString(string file, unsigned char key, bool shift, bool ctrl){
             case VK_ADD: fout << "+"; cout << "+"; break;
             case VK_SUBTRACT: fout << "-"; cout << "-"; break;
             case VK_DECIMAL: fout << "."; cout << "."; break;
-            case VK_DIVIDE: fout << "/"; cout << "/"; break;     
+            case VK_DIVIDE: fout << "/"; cout << "/"; break;
+            case 0xBB: fout << "="; cout << "="; break;
+            case 0xBD: fout << "-"; cout << "-"; break;     
         }
     }
     else
@@ -319,7 +324,9 @@ void FormatString(string file, unsigned char key, bool shift, bool ctrl){
             case VK_ADD: fout << "+"; cout << "+"; break;
             case VK_SUBTRACT: fout << "-"; cout << "-"; break;
             case VK_DECIMAL: fout << "."; cout << "."; break;
-            case VK_DIVIDE: fout << "/"; cout << "/"; break;     
+            case VK_DIVIDE: fout << "/"; cout << "/"; break;
+            case 0xBB: fout << "+"; cout << "+"; break;
+            case 0xBD: fout << "_"; cout << "_"; break;     
         }
     }
     if(key >= 0x30 && key <= 0x39)
@@ -606,6 +613,14 @@ void SpecialKeys(string file, unsigned char key, int &counter){
     if(key == VK_NEXT){
         fout << "PAGEDOWN ";
         cout << "PAGEDOWN ";
+    }
+    if(key == 0xBB){
+        cout << "+ ";
+        fout << "+" ;
+    }
+    if(key == 0xBD){
+        fout << "- ";
+        cout << "- ";
     }
 
     counter = 0;
