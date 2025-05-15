@@ -71,15 +71,12 @@ int main() {
     cout << endl << endl << "\t - - - END OF DUCKY CODE - - -";
     //program finished
     cout << endl << "\nLogger finished, saved in " << file << " in Rubber DUCKY format ^_~" << endl << endl;
-    cout << "Press any key to continue" << endl;
+    cout << "Press X to continue" << endl;
     while(true)
     {
-        for(int i = 8; i <= 255; i++)
+        if(GetAsyncKeyState(0x58) & 0x8000)
         {
-            if(GetAsyncKeyState(i) & 0x8000)
-            {
-                return 0;
-            }
+            return 0;
         }
     }
 }
@@ -848,6 +845,6 @@ bool DeleteLine(string file){
         cout << "Error opening file";
         return false;
     }
-    fout << "REM LINE DELETED" << endl;
+    //fout << "REM LINE DELETED" << endl;
     return true;
 }
