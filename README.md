@@ -14,6 +14,8 @@
 
 
 IMPORTANT: Run program as admin to log keys in admin powershell and prevent authority issues in certain applications - - - ONLY WORKS ON WINDOWS
+
+
 * AUTOSTRING: starts a string when any A-Z character is typed, and ends when ENTER is pressed
 * MANUAL STRING: Press F2 to start/stop a manual string
 * COPY/PASTE (ONLY IN STRING MODE): CTRL+C (or copy with mouse), CTRL+V
