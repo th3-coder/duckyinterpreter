@@ -25,4 +25,11 @@ IMPORTANT: Run program as admin to log keys in admin powershell and prevent auth
 * MANUAL DELAY: NUMLOCK+ARROWS
 * REMOVE PREVIOUS LINE: NUMLOCK+BACKSPACE
 * CHANGE ATTACKMODE (EXPERIMENTAL): Press F9 to change DUCKY from HID to STORAGE device
-    * A template string is genereated when entering storage mode to save contents to DUCKY 
+        
+        HID STORAGE MODE
+       * Opens an elevated powershell terminal in the machine root directory
+       * saves the ducky drive letter to $Ducky variable in powershell instance for later reference
+
+       HID MODE
+       * once in this mode, DUCKY is not seen as a storage device
+       * only useful for HID inputs as the name suggests
