@@ -1,4 +1,4 @@
-# DUCKYinterpreter
+# Duckyinterpreter
 
 * No need to manually write DUCKY scripts anymore!
 * emulate and test payload at the same time
