@@ -5,7 +5,7 @@
 
 
 ## IMPORTANT: 
-* Run program as admin to log keys in admin powershell and prevent authority issues in certain applications - - - ONLY WORKS ON WINDOWS
+* Run program as admin to prevent authority issues in certain applications - - - ONLY WORKS ON WINDOWS
 * Create folder or file exlcusion if windows removes .exe 
 * Currently working on dependecies, for now either compile .cpp file yourself and run
 
