@@ -10,7 +10,7 @@
 * Currently working on dependecies, for now either compile .cpp file yourself and run
 
 
-**or**
+    **or**
 
 
 * Run static-interpreter.exe which has all dependicies built in
