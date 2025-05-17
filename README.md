@@ -3,12 +3,17 @@
 * No need to manually write DUCKY scripts anymore!
 * emulate and test payload at the same time
 
+
 Install required dlls:
 1. Clone repo to local folder
 2. Open powershell >> change directory to folder containing .exe
 3. Run commad "powershell -ExecutionPolicy Bypass -File .\install-dlls.ps1"
 
 
+IMPORTANT: Run program as admin to log keys in admin powershell and prevent authority issues in certain applications - - - ONLY WORKS ON WINDOWS
+
+
+Run Program:
 1. Run .exe
     * opens terminal which shows rubby DUCKY formatted file in real time
 2. Enter file number (files with same name will be overwritten)
@@ -16,9 +21,6 @@ Install required dlls:
 4. Payload will then be saved to payload(_).dd in the same directory as the .exe
 5. Rename to desired name and transfer to rubberDUCKY (or any badusb device that uses DUCKY language)
 6. Plug in DUCKY and payload that you just emulated will run!
-
-
-IMPORTANT: Run program as admin to log keys in admin powershell and prevent authority issues in certain applications - - - ONLY WORKS ON WINDOWS
 
 
 * AUTOSTRING: starts a string when any A-Z character is typed, and ends when ENTER is pressed
