@@ -10,7 +10,7 @@
 
 
 **EITHER** 
-* Compile interpreter.cpp and
+* Compile interpreter.cpp yourself
 
 
     **or**
