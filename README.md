@@ -13,7 +13,7 @@
     **or**
 
 
-* Ensure dependecies placed in same folder as interpreter.exe and run
+* Ensure dependecies are in same folder as interpreter.exe and run
 
 
 ### Running Program:
