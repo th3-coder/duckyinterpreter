@@ -7,13 +7,13 @@
 ## IMPORTANT: 
 * Run program as admin to prevent authority issues in certain applications - - - ONLY WORKS ON WINDOWS
 * Create folder or file exlcusion if windows removes .exe 
-* Currently working on dependecies, for now either compile .cpp file yourself and run
+* Either and compile interpreter.cpp yourself
 
 
     **or**
 
 
-* Run static-interpreter.exe which has all dependicies built in
+* Ensure dependecies placed in same folder as interpreter.exe and run
 
 
 ### Running Program:
