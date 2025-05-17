@@ -3,6 +3,11 @@
 * No need to manually write DUCKY scripts anymore!
 * emulate and test payload at the same time
 
+Install required dlls:
+1. Clone repo to local folder
+2. Open powershell >> change directory to folder containing .exe
+3. Run commad "powershell -ExecutionPolicy Bypass -File .\install-dlls.ps1"
+
 
 1. Run .exe
     * opens terminal which shows rubby DUCKY formatted file in real time
