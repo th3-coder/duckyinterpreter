@@ -1,4 +1,4 @@
-### DUCKYinterpreter
+# DUCKYinterpreter
 
 * No need to manually write DUCKY scripts anymore!
 * emulate and test payload at the same time
@@ -6,7 +6,7 @@
 
 
 
-### IMPORTANT: 
+## IMPORTANT: 
 * Run program as admin to log keys in admin powershell and prevent authority issues in certain applications - - - ONLY WORKS ON WINDOWS
 * Create folder or file exlcusion if windows removes .exe 
 * Currently working on dependecies, for now either compile .cpp file yourself and run
@@ -22,7 +22,7 @@
 
 
 
-## Running Program:
+### Running Program:
 1. Run .exe
     * opens terminal which shows rubby DUCKY formatted file in real time
 2. Enter file number (files with same name will be overwritten)
@@ -32,22 +32,22 @@
 6. Plug in DUCKY and payload that you just emulated will run!
 
 
-* # AUTOSTRING: starts a string when any A-Z character is typed, and ends when ENTER is pressed
-* # MANUAL STRING: Press F2 to start/stop a manual string
-* # COPY/PASTE (ONLY IN STRING MODE): CTRL+C (or copy with mouse), CTRL+V
+* ### AUTOSTRING: starts a string when any A-Z character is typed, and ends when ENTER is pressed
+* ### MANUAL STRING: Press F2 to start/stop a manual string
+* ### COPY/PASTE (ONLY IN STRING MODE): CTRL+C (or copy with mouse), CTRL+V
      * If not in string mode, then
     1. Enter manual string mode (press F2)
     2. COPY CONTENTS
     3. PASTE CONTENTS
     4. Exit manual string mode (press F2)    
-* # MANUAL DELAY: NUMLOCK+ARROWS
-* # REMOVE PREVIOUS LINE: NUMLOCK+BACKSPACE
-* # CHANGE ATTACKMODE (EXPERIMENTAL): Press F9 to change DUCKY from HID to STORAGE device
+* ### MANUAL DELAY: NUMLOCK+ARROWS
+* ### REMOVE PREVIOUS LINE: NUMLOCK+BACKSPACE
+* ### CHANGE ATTACKMODE (EXPERIMENTAL): Press F9 to change DUCKY from HID to STORAGE device
         
-       # HID STORAGE MODE
+       ### HID STORAGE MODE
        * Opens an elevated powershell terminal in the machine root directory
        * saves the ducky drive letter to $Ducky variable in powershell instance for later reference
 
-       # HID MODE
+       ### HID MODE
        * once in this mode, DUCKY is not seen as a storage device
        * only useful for HID inputs as the name suggests
