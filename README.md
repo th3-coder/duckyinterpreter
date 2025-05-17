@@ -4,9 +4,9 @@
 * emulate and test payload at the same time
 
 
-Install required dlls:
+Check required dlls:
 1. Clone repo to local folder
-2. Open powershell >> change directory to folder containing .exe
+2. Open powershell in \localpath\duckyinterpreter\dlls
 3. Run commad "powershell -ExecutionPolicy Bypass -File .\install-dlls.ps1"
 
 
