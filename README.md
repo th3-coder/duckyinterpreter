@@ -20,7 +20,9 @@ IMPORTANT:
 
 
 
-Run Program:
+
+
+Running Program:
 1. Run .exe
     * opens terminal which shows rubby DUCKY formatted file in real time
 2. Enter file number (files with same name will be overwritten)
