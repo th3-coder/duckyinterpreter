@@ -31,6 +31,7 @@
 
 * **AUTOSTRING**: starts a string when any A-Z character is typed, and ends when ENTER is pressed
 * **MANUAL STRING**: Press F2 to start/stop a manual string
+* **CHAR PRESS**: Hold numlock and press character 
 * **COPY/PASTE** (ONLY IN STRING MODE): CTRL+C (or copy with mouse), CTRL+V
      * If not in string mode, then
     1. Enter manual string mode (press F2)
