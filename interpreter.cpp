@@ -830,6 +830,7 @@ void DeleteKey(string file){
 
 bool AddDelay(string file, unsigned char key){
     fstream fout;
+    //numlock command key
     if(GetAsyncKeyState(VK_NUMLOCK) & 0x8000){
         //opem file if command key pressed
         fout.open(file.c_str(), ios::app);
@@ -862,16 +863,20 @@ bool AddDelay(string file, unsigned char key){
         }
         else if(GetAsyncKeyState(VK_BACK) & 0x8000)
         {
-
             DeleteLine(file);
-
+        }
+        else if( key > 0x41 && key < 0x5A){
+            //fout << key << endl << "DELAY 300" << endl;
+            cout << key << endl << "DELAY 300" << endl;
         }
         //close file
         fout.close();
         return true;
     }
 
-    else{
+    else
+    {
+        //continue through main loop if numlock not pressed
     return false;
     }
 }
